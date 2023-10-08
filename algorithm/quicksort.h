@@ -17,8 +17,8 @@ size_t _randrange(size_t left, size_t right);
 
 #ifdef VERBOSE
 void dump_mem(int *left, int *right);
-void dump_array(int *arr, size_t nmemb);
 #endif
+void dump_array(int *arr, size_t nmemb);
 
 void _swap(void *a, void *b, size_t size);
 int *_hoare_partition(int *left, int *right);

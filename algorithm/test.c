@@ -9,8 +9,8 @@ int main() {
     #endif
 
     {
-    #ifdef VERBOSE
     fprintf(stderr, "-------Тест 1--------------\n");
+    #ifdef VERBOSE
     fprintf(stderr, "-------До сортировки-------\n");
     #endif
 
@@ -26,12 +26,12 @@ int main() {
 
     dump_array(ARRAY, 12);
     }
-    printf("Нажмите Enter чтобы продолжить\n");
+    printf("Нажмите Enter чтобы продолжить");
     while( getchar() != '\n' ) {};
     // #################################################
     {
-    #ifdef VERBOSE
     fprintf(stderr, "-------Тест 2--------------\n");
+    #ifdef VERBOSE
     fprintf(stderr, "-------До сортировки-------\n");
     #endif
 
@@ -47,12 +47,12 @@ int main() {
 
     dump_array(ARRAY, 3);
     }
-    printf("Нажмите Enter чтобы продолжить\n");
+    printf("Нажмите Enter чтобы продолжить");
     while( getchar() != '\n' ) {};
     // #################################################
     {
-    #ifdef VERBOSE
     fprintf(stderr, "-------Тест 3--------------\n");
+    #ifdef VERBOSE
     fprintf(stderr, "-------До сортировки-------\n");
     #endif
 
@@ -67,6 +67,50 @@ int main() {
     #endif
 
     dump_array(ARRAY, 5);
+    }
+    printf("Нажмите Enter чтобы продолжить");
+    while( getchar() != '\n' ) {};
+    // #################################################
+    {
+    fprintf(stderr, "-------Тест 4--------------\n");
+
+    #ifdef VERBOSE
+    fprintf(stderr, "-------До сортировки-------\n");
+    #endif
+
+    int ARRAY[] = {1, 2, 1, 1, -9999, 100000};
+
+    dump_array(ARRAY, 6);
+
+    _quicksort(ARRAY, ARRAY + 6);
+
+    #ifdef VERBOSE
+    fprintf(stderr, "----После сортировки-------\n");
+    #endif
+
+    dump_array(ARRAY, 6);
+    }
+    printf("Нажмите Enter чтобы продолжить");
+    while( getchar() != '\n' ) {};
+    // #################################################
+    {
+    fprintf(stderr, "-------Тест 4--------------\n");
+
+    #ifdef VERBOSE
+    fprintf(stderr, "-------До сортировки-------\n");
+    #endif
+
+    int ARRAY[] = { 5 };
+
+    dump_array(ARRAY, 1);
+
+    _quicksort(ARRAY, ARRAY + 1);
+
+    #ifdef VERBOSE
+    fprintf(stderr, "----После сортировки-------\n");
+    #endif
+
+    dump_array(ARRAY, 1);
     }
 
     return 0;

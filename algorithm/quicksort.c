@@ -7,6 +7,7 @@ size_t _randrange(size_t left, size_t right) {
     return (size_t) rand() % (right - left) + left;
 }
 
+#ifdef VERBOSE
 void dump_mem(int *left, int *right) {
     size_t length = (size_t) (right - left);
 
@@ -14,6 +15,7 @@ void dump_mem(int *left, int *right) {
         fprintf(stderr, "%2d ", left[i]);
     }
 }
+#endif
 
 void dump_array(int *arr, size_t nmemb) {
     fprintf(stderr, "[ ");
@@ -38,11 +40,11 @@ void _swap(void *a, void *b, size_t size) {
 }
 
 int *_hoare_partition(int *left, int *right) {
-    size_t length = (size_t) (right - left);
-
     int *pivot = left + _randrange(0, (size_t) (right-left)); 
 
     #ifdef VERBOSE
+        size_t length = (size_t) (right - left);
+
         /*
          *   ....|_|_|_|_|_|_|_|_|_|_|_|_|_....
          * left   ^             ^         ^ right
@@ -185,11 +187,13 @@ int *_hoare_partition(int *left, int *right) {
 }
 
 void _quicksort(int *left, int *right) {
-    if (left >= right)
+    if (right - left <= 1)
         return;
 
     if (right - left == 2) {
-        _swap(left, right, sizeof(int));
+        if ( *left > *right ) {
+            _swap(left, right, sizeof(int));
+        }
         return;
     }
 
@@ -198,25 +202,4 @@ void _quicksort(int *left, int *right) {
     _quicksort(left, pivot);
     _quicksort(pivot + 1, right);
 }
-
-/*
-void sort(container_t container) {
-    void *lo = container.data;
-    void *hi = container.data;
-    _quicksort(lo, hi);
-}
-*/
-
-/*
-// pointer
-// comparator
-// exchanger
-typedef struct {
-    void (*cmp) (void *, void *);  // returns -1 if x1 < x2, 0 if x1 == x2, 1 if x1 > x2
-    void (*swap) (void *, void *);
-    size_t size;
-    size_t nmemb;
-    void *data;
-} container_t;
-*/
 
