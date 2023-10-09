@@ -13,14 +13,16 @@
 #define CYA   "\x1b[36m" // cyan
 #define RST   "\x1b[0m"  // reset color
 
-size_t _randrange(size_t left, size_t right);
-
 #ifdef VERBOSE
 void dump_mem(int *left, int *right);
 #endif
 void dump_array(int *arr, size_t nmemb);
 
+size_t _randrange(size_t left, size_t right);
 void _swap(void *a, void *b, size_t size);
-int *_hoare_partition(int *left, int *right);
-void _quicksort(int *left, int *right);
+
+typedef int (*compar_f) (const void *, const void *);
+
+char *_hoare_partition(char *left, char *right, size_t size, compar_f cmp);
+void quicksort(void *base, size_t nmemb, size_t size, compar_f cmp);
 

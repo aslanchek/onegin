@@ -1,10 +1,10 @@
 #include "quicksort.h"
 
 // возвращает случайное число 
-// в диапазоне [left, right) <- не включительно
-// где left и right >= 0
-size_t _randrange(size_t left, size_t right) {
-    return (size_t) rand() % (right - left) + left;
+// в диапазоне [a, b) <- не включительно
+// где a и b >= 0
+size_t _randrange(size_t a, size_t b) {
+    return (size_t) rand() % (b - a) + a;
 }
 
 #ifdef VERBOSE
@@ -39,11 +39,14 @@ void _swap(void *a, void *b, size_t size) {
     }
 }
 
-int *_hoare_partition(int *left, int *right) {
-    int *pivot = left + _randrange(0, (size_t) (right-left)); 
+// |_|_|_|_|_|_|
+//  ^           ^
+// left        right - excluding
+char *_hoare_partition(char *left, char *right, size_t size, compar_f cmp) {
+    char *pivot = left + size * _randrange(0, (size_t) (right-left) / size);
 
-    #ifdef VERBOSE
-        size_t length = (size_t) (right - left);
+     #ifdef VERBOSE
+        size_t length = (size_t) (right - left) / size;
 
         /*
          *   ....|_|_|_|_|_|_|_|_|_|_|_|_|_....
@@ -59,124 +62,118 @@ int *_hoare_partition(int *left, int *right) {
         fprintf(stderr, "------Partition Dump------\n");
         
         fprintf(stderr, "Part:\n");
-        dump_array(left, length);
+        dump_array((int *)left, length);
 
-        fprintf(stderr, "pivot: %2d\n", *pivot);
+        fprintf(stderr, "pivot: %2d\n", *(int *)pivot);
     #endif
 
-    int *ip = left;
-    int *jp = right-1;
+    char *ip = left;
+    char *jp = right - size;
 
-    while (1) {
-        while( *ip <= *pivot && ip < pivot) {
-            ip++;
+    while (ip < jp) {
+        while( cmp(ip, pivot) <= 0 && ip < pivot) {
+            ip += size;
         }
 
-        while( *jp > *pivot && jp > pivot ) {
-            jp--;
+        while( cmp(jp, pivot) > 0  && jp > pivot) {
+            jp -= size;
         }
 
         if (ip == pivot && jp == pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
-                dump_mem(left, ip);
-                fprintf(stderr, GRE "%2d " RST, *ip); // green
-                dump_mem(ip + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, GRE "%2d " RST, *(int *)ip); // green
+                dump_mem((int *)ip + 1, (int *)right);
                 fprintf(stderr, "]\n");
             #endif
             // nothing to do
-            break;
         } else if (ip < pivot && jp == pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, RED "%2d " RST, *ip); // red
-                dump_mem(ip+1, jp);
-                fprintf(stderr, RED "%2d " RST, *jp); // red
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, RED "%2d " RST, *(int *)ip); // red
+                dump_mem((int *)ip+1, (int *)jp);
+                fprintf(stderr, RED "%2d " RST, *(int *)jp); // red
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
-
             // action
-            _swap(ip, jp, sizeof(int));
+            _swap(ip, jp, size);
             pivot = ip;
 
             // result
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, MAG "%2d " RST, *ip); // magenta
-                dump_mem(ip+1, jp);
-                fprintf(stderr, MAG "%2d " RST, *jp); // magenta
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, MAG "%2d " RST, *(int *)ip); // magenta
+                dump_mem((int *)ip+1, (int *)jp);
+                fprintf(stderr, MAG "%2d " RST, *(int *)jp); // magenta
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
 
-            break;
         } else if (ip == pivot && jp > pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, RED "%2d " RST, *ip); // red
-                dump_mem(ip+1, jp);
-                fprintf(stderr, RED "%2d " RST, *jp); // red
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, RED "%2d " RST, *(int *)ip); // red
+                dump_mem((int *)ip+1, (int *)jp);
+                fprintf(stderr, RED "%2d " RST, *(int *)jp); // red
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
-
             // action
-            _swap(ip, jp, sizeof(int));
+            _swap(ip, jp, size);
             pivot = jp;
 
             // result
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, MAG "%2d " RST, *ip); // magenta
-                dump_mem(ip+1, jp);
-                fprintf(stderr, MAG "%2d " RST, *jp); // magenta
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, MAG "%2d " RST, *(int *)ip); // magenta
+                dump_mem((int *)ip+1, (int *)jp);
+                fprintf(stderr, MAG "%2d " RST, *(int *)jp); // magenta
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
 
-            break;
         } else if (ip < pivot && jp > pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, RED "%2d " RST, *ip); // red
-                dump_mem(ip + 1, pivot);
-                fprintf(stderr, GRE "%2d " RST, *pivot); // green
-                dump_mem(pivot + 1, jp);
-                fprintf(stderr, RED "%2d " RST, *jp); // red
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, RED "%2d " RST, *(int *)ip); // red
+                dump_mem((int *)ip + 1, (int *)pivot);
+                fprintf(stderr, GRE "%2d " RST, *(int *)pivot); // green
+                dump_mem((int *)pivot + 1, (int *)jp);
+                fprintf(stderr, RED "%2d " RST, *(int *)jp); // red
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
-
             // action
-            _swap(ip, jp, sizeof(int));
+            _swap(ip, jp, size);
 
             // result
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
 
-                dump_mem(left, ip);
-                fprintf(stderr, MAG "%2d " RST, *ip); // magenta
-                dump_mem(ip + 1, pivot);
-                fprintf(stderr, GRE "%2d " RST, *pivot); // green
-                dump_mem(pivot + 1, jp);
-                fprintf(stderr, MAG "%2d " RST, *jp); // magenta
-                dump_mem(jp + 1, right);
+                dump_mem((int *)left, (int *)ip);
+                fprintf(stderr, MAG "%2d " RST, *(int *)ip); // magenta
+                dump_mem((int *)ip + 1, (int *)pivot);
+                fprintf(stderr, GRE "%2d " RST, *(int *)pivot); // green
+                dump_mem((int *)pivot + 1, (int *)jp);
+                fprintf(stderr, MAG "%2d " RST, *(int *)jp); // magenta
+                dump_mem((int *)jp + 1, (int *)right);
 
                 fprintf(stderr, "]\n");
             #endif
@@ -186,20 +183,31 @@ int *_hoare_partition(int *left, int *right) {
     return pivot;
 }
 
-void _quicksort(int *left, int *right) {
-    if (right - left <= 1)
+
+void quicksort(void *base, 
+               size_t nmemb, 
+               size_t size,
+               compar_f cmp) {
+
+    if (nmemb <= 1)
         return;
 
-    if (right - left == 2) {
-        if ( *left > *right ) {
-            _swap(left, right, sizeof(int));
+    char *left  = (char *) base;
+    char *right = (char *) base + size * nmemb;
+
+    if (nmemb == 2) {
+        if ( cmp(left, right - size) > 0 ) {
+            _swap(left, right - size, size);
         }
         return;
     }
 
-    int *pivot = _hoare_partition(left, right);
+    char *pivot = _hoare_partition(left, right, size, cmp);
 
-    _quicksort(left, pivot);
-    _quicksort(pivot + 1, right);
+    size_t lpartnmemb = (size_t)(pivot - left)/size;
+    quicksort(left,         lpartnmemb, size, cmp);
+
+    size_t rpartnmemb = (size_t)(right - (pivot + size))/size;
+    quicksort(pivot + size, rpartnmemb, size, cmp);
 }
 
