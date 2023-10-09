@@ -67,7 +67,7 @@ int *_hoare_partition(int *left, int *right) {
     int *ip = left;
     int *jp = right-1;
 
-    while (1) {
+    while (ip < jp) {
         while( *ip <= *pivot && ip < pivot) {
             ip++;
         }
@@ -116,7 +116,7 @@ int *_hoare_partition(int *left, int *right) {
                 fprintf(stderr, "]\n");
             #endif
 
-            break;
+//            break;
         } else if (ip == pivot && jp > pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
@@ -147,7 +147,7 @@ int *_hoare_partition(int *left, int *right) {
                 fprintf(stderr, "]\n");
             #endif
 
-            break;
+//            break;
         } else if (ip < pivot && jp > pivot) {
             #ifdef VERBOSE
                 fprintf(stderr, "[ ");
@@ -191,8 +191,8 @@ void _quicksort(int *left, int *right) {
         return;
 
     if (right - left == 2) {
-        if ( *left > *right ) {
-            _swap(left, right, sizeof(int));
+        if ( *left > *(right-1) ) {
+            _swap(left, right-1, sizeof(int));
         }
         return;
     }
