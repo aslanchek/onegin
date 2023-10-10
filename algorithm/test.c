@@ -6,15 +6,15 @@
 // d1 = d2 -> = 0
 // d1 > d2 -> > 0
 int cmp_int(const void *dp1, const void *dp2) {
-    int d1 = *(int *)dp1;
-    int d2 = *(int *)dp2;
+    int d1 = *(const int *)dp1;
+    int d2 = *(const int *)dp2;
     return d1 == d2 ? 0 : d1 < d2 ? -1 : 1;
 }
 
 #define EPSILON 0.00001
 int cmp_double(const void *dp1, const void *dp2) {
-    double d1 = *(double *) dp1;
-    double d2 = *(double *) dp2;
+    double d1 = *(const double *) dp1;
+    double d2 = *(const double *) dp2;
 
     // abs(x) < E <=> x < E and x > -E
     // x > -E <=> -x < E
@@ -28,6 +28,14 @@ int cmp_double(const void *dp1, const void *dp2) {
 }
 
 int main() {
+
+    #ifdef VERBOSE
+    fprintf(stderr, "-------Цвета означают------\n");
+    fprintf(stderr, GRE "■" RST " - выбранный pivot"  "\n");
+    fprintf(stderr, RED "■" RST " - те, что меняются на данном шаге" "\n");
+    fprintf(stderr, MAG "■" RST " - индикация перемещения элементов"  "\n");
+    #endif
+
     srand(time(NULL));
     {
     fprintf(stderr, "-------Тест 1--------------\n");
